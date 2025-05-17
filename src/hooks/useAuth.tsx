@@ -20,9 +20,9 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock admin user
-const ADMIN_EMAIL = 'admin@example.com';
-const ADMIN_PASSWORD = 'admin123';
+// Updated admin credentials
+const ADMIN_EMAIL = 'admin123@gmail.com';
+const ADMIN_PASSWORD = '123456789OO';
 const MOCK_ADMIN_USER: User = {
   id: '1',
   email: ADMIN_EMAIL,
