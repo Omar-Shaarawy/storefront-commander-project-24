@@ -3,12 +3,10 @@ import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import SearchFilters from "@/components/SearchFilters";
 import ProductGrid from "@/components/ProductGrid";
-import { products as initialProducts } from "@/lib/mockData";
-import { Product } from "@/lib/mockData";
+import { useProducts } from "@/contexts/ProductContext";
 
 const Index = () => {
-  const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>(initialProducts);
+  const { products, filteredProducts, setFilteredProducts } = useProducts();
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [sort, setSort] = useState("newest");
@@ -52,7 +50,7 @@ const Index = () => {
     }
     
     setFilteredProducts(result);
-  }, [searchQuery, category, sort, products]);
+  }, [searchQuery, category, sort, products, setFilteredProducts]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);

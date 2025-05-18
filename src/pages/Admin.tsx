@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import { useAuth } from "@/hooks/useAuth";
-import { Product, products as initialProducts } from "@/lib/mockData";
+import { Product } from "@/lib/mockData";
+import { useProducts } from "@/contexts/ProductContext";
 import AdminProductForm from "@/components/AdminProductForm";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,16 +26,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { toast } from "@/components/ui/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Admin = () => {
   const { isAuthenticated, isAdmin } = useAuth();
   const navigate = useNavigate();
-  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [deletingProductId, setDeletingProductId] = useState<string | null>(null);
 
   // Redirect if not authenticated or not admin
   useEffect(() => {
@@ -44,46 +43,19 @@ const Admin = () => {
   }, [isAuthenticated, isAdmin, navigate]);
 
   const handleAddProduct = (productData: Omit<Product, "id" | "createdAt">) => {
-    const newProduct: Product = {
-      ...productData,
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString(),
-    };
-    
-    setProducts([newProduct, ...products]);
+    addProduct(productData);
     setIsAddingProduct(false);
-    toast({
-      title: "Product added",
-      description: `"${newProduct.name}" has been added successfully`,
-    });
   };
 
   const handleUpdateProduct = (productData: Omit<Product, "id" | "createdAt">) => {
     if (!editingProduct) return;
     
-    const updatedProducts = products.map((product) =>
-      product.id === editingProduct.id
-        ? { ...product, ...productData }
-        : product
-    );
-    
-    setProducts(updatedProducts);
+    updateProduct(editingProduct.id, productData);
     setEditingProduct(null);
-    toast({
-      title: "Product updated",
-      description: `"${productData.name}" has been updated successfully`,
-    });
   };
 
   const handleDeleteProduct = (id: string) => {
-    setProducts(products.filter((product) => product.id !== id));
-    setDeletingProductId(null);
-    
-    const productName = products.find(p => p.id === id)?.name || "Product";
-    toast({
-      title: "Product deleted",
-      description: `"${productName}" has been removed successfully`,
-    });
+    deleteProduct(id);
   };
 
   if (!isAuthenticated || !isAdmin) {
