@@ -35,7 +35,7 @@ const SearchFilters = ({
       <form onSubmit={handleSearchSubmit} className="md:flex gap-4 space-y-3 md:space-y-0">
         <div className="flex-1">
           <Input
-            placeholder="ابحث عن منتجات..."
+            placeholder="ابحثي عن إكسسوارات..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full text-right"

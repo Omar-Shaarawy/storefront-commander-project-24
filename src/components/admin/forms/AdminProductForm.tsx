@@ -66,8 +66,8 @@ const AdminProductForm = ({
     // Basic validation
     if (!formData.name.trim() || !formData.description.trim()) {
       toast({
-        title: "Validation Error",
-        description: "Please fill out all required fields",
+        title: "خطأ في التحقق",
+        description: "يرجى ملء جميع الحقول المطلوبة",
         variant: "destructive",
       });
       return;
@@ -76,8 +76,8 @@ const AdminProductForm = ({
     // Check if we have either an image URL or an uploaded file
     if (!formData.image && !imageFile) {
       toast({
-        title: "Validation Error",
-        description: "Please provide a product image",
+        title: "خطأ في التحقق",
+        description: "يرجى إضافة صورة للمنتج",
         variant: "destructive",
       });
       return;
@@ -85,8 +85,8 @@ const AdminProductForm = ({
     
     if (!formData.category) {
       toast({
-        title: "Validation Error",
-        description: "Please select a product category",
+        title: "خطأ في التحقق",
+        description: "يرجى اختيار فئة للمنتج",
         variant: "destructive",
       });
       return;
@@ -98,7 +98,7 @@ const AdminProductForm = ({
   return (
     <form onSubmit={handleSubmit} className="space-y-4 p-4 bg-white rounded-lg shadow">
       <h2 className="text-xl font-bold mb-4">
-        {isEditing ? "Edit Product" : "Add New Product"}
+        {isEditing ? "تعديل المنتج" : "إضافة منتج جديد"}
       </h2>
       
       <ProductBasicFields 

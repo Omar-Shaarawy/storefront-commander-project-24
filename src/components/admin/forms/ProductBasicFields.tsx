@@ -102,19 +102,20 @@ const ProductBasicFields: React.FC<ProductBasicFieldsProps> = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div className="space-y-2">
-        <Label htmlFor="name">Product Name</Label>
+        <Label htmlFor="name">اسم المنتج</Label>
         <Input
           id="name"
           name="name"
           value={name}
           onChange={handleChange}
-          placeholder="Product name"
+          placeholder="اسم المنتج"
           required
+          className="text-right"
         />
       </div>
       
       <div className="space-y-2">
-        <Label htmlFor="price">Price</Label>
+        <Label htmlFor="price">السعر</Label>
         <Input
           id="price"
           name="price"
@@ -125,18 +126,19 @@ const ProductBasicFields: React.FC<ProductBasicFieldsProps> = ({
           onChange={handleChange}
           placeholder="0.00"
           required
+          className="text-right"
         />
       </div>
       
       <div className="space-y-2">
-        <Label htmlFor="category">Category</Label>
+        <Label htmlFor="category">الفئة</Label>
         <Select 
           name="category"
           value={category} 
           onValueChange={onCategoryChange}
         >
           <SelectTrigger id="category">
-            <SelectValue placeholder="Select category" />
+            <SelectValue placeholder="اختر الفئة" />
           </SelectTrigger>
           <SelectContent>
             {categories.map((category) => (
@@ -149,7 +151,7 @@ const ProductBasicFields: React.FC<ProductBasicFieldsProps> = ({
       </div>
       
       <div className="space-y-2">
-        <Label htmlFor="rating">Rating (1-5)</Label>
+        <Label htmlFor="rating">التقييم (1-5)</Label>
         <Input
           id="rating"
           name="rating"
@@ -160,11 +162,12 @@ const ProductBasicFields: React.FC<ProductBasicFieldsProps> = ({
           value={rating}
           onChange={handleChange}
           required
+          className="text-right"
         />
       </div>
       
       <div className="space-y-2 md:col-span-2">
-        <Label htmlFor="productImage">Product Image</Label>
+        <Label htmlFor="productImage">صورة المنتج</Label>
         
         {/* Hidden file input */}
         <input
@@ -180,7 +183,7 @@ const ProductBasicFields: React.FC<ProductBasicFieldsProps> = ({
           <div className="relative w-full h-64 border rounded-md overflow-hidden">
             <img 
               src={imagePreview} 
-              alt="Product preview" 
+              alt="معاينة المنتج" 
               className="w-full h-full object-contain"
             />
             <button
@@ -198,14 +201,14 @@ const ProductBasicFields: React.FC<ProductBasicFieldsProps> = ({
           >
             <Upload size={32} className="mb-2 text-gray-400" />
             <p className="text-sm text-gray-500 text-center">
-              Click to upload a product image
+              انقر لرفع صورة المنتج
             </p>
-            <p className="text-xs text-gray-400 mt-1">PNG, JPG, GIF up to 5MB</p>
+            <p className="text-xs text-gray-400 mt-1">PNG، JPG، GIF حتى 5MB</p>
           </div>
         )}
         
         <p className="text-xs text-gray-500 mt-1">
-          Upload an image from your device or provide a URL below.
+          قم برفع صورة من جهازك أو أدخل رابط الصورة أدناه.
         </p>
         
         {/* Keep the URL input for backwards compatibility and external images */}
@@ -214,8 +217,8 @@ const ProductBasicFields: React.FC<ProductBasicFieldsProps> = ({
           name="image"
           value={image && image !== "file-upload" ? image : ""}
           onChange={handleChange}
-          placeholder="Or provide an image URL (https://...)"
-          className="mt-2"
+          placeholder="أو أدخل رابط الصورة (https://...)"
+          className="mt-2 text-right"
           disabled={!!imagePreview && image === "file-upload"}
         />
       </div>

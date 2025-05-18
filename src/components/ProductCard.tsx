@@ -1,3 +1,4 @@
+
 import { Star } from "lucide-react";
 import { Product } from "@/lib/mockData";
 import { useNavigate } from "react-router-dom";
@@ -52,12 +53,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
       <div className="product-card-body">
         <div className="mb-2 flex items-center justify-between">
           <h3 className="font-medium">{name}</h3>
-          <p className="font-bold text-brand-dark">${price.toFixed(2)}</p>
+          <p className="font-bold text-brand-dark">{price.toFixed(2)} ريال</p>
         </div>
         <div className="star-rating mb-2">{renderStars(rating)}</div>
         <p className="text-sm text-gray-600 line-clamp-2 mb-3 flex-grow">{description}</p>
         <button className="w-full rounded-md bg-brand py-2 text-white hover:bg-brand-dark transition-colors">
-          View Details
+          عرض التفاصيل
         </button>
       </div>
     </div>

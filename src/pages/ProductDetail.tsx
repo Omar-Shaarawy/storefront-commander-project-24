@@ -24,9 +24,9 @@ const ProductDetail = () => {
         <Header />
         <main className="flex-1 container py-16">
           <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Product Not Found</h1>
-            <p className="mb-6">The product you are looking for does not exist.</p>
-            <Button onClick={() => navigate("/")}>Back to Home</Button>
+            <h1 className="text-2xl font-bold mb-4">المنتج غير موجود</h1>
+            <p className="mb-6">المنتج الذي تبحثين عنه غير موجود.</p>
+            <Button onClick={() => navigate("/")}>العودة للرئيسية</Button>
           </div>
         </main>
       </div>
@@ -75,7 +75,7 @@ const ProductDetail = () => {
       <main className="flex-1 container py-8">
         <div className="mb-4">
           <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
-            &larr; Back
+            العودة &larr;
           </Button>
         </div>
         
@@ -97,17 +97,17 @@ const ProductDetail = () => {
                 <div className="flex">{renderStars(product.rating)}</div>
                 <span className="text-sm text-gray-600">({product.rating.toFixed(1)})</span>
               </div>
-              <p className="text-2xl font-bold text-brand-dark">${product.price.toFixed(2)}</p>
+              <p className="text-2xl font-bold text-brand-dark">{product.price.toFixed(2)} ريال</p>
             </div>
             
             <div>
-              <h2 className="text-lg font-semibold mb-2">Description</h2>
+              <h2 className="text-lg font-semibold mb-2">الوصف</h2>
               <p className="text-gray-700">{product.description}</p>
             </div>
             
             {product.tags && product.tags.length > 0 && (
               <div>
-                <h2 className="text-lg font-semibold mb-2">Tags</h2>
+                <h2 className="text-lg font-semibold mb-2">الكلمات المفتاحية</h2>
                 <div className="flex flex-wrap gap-2">
                   {product.tags.map((tag, index) => (
                     <span key={index} className="bg-gray-100 px-3 py-1 rounded-full text-sm">
@@ -120,7 +120,7 @@ const ProductDetail = () => {
             
             <Card className="p-4">
               <div className="mb-4">
-                <h2 className="text-lg font-semibold mb-2">Quantity</h2>
+                <h2 className="text-lg font-semibold mb-2">الكمية</h2>
                 <div className="flex items-center">
                   <Button 
                     variant="outline" 
@@ -145,8 +145,8 @@ const ProductDetail = () => {
                 size="lg"
                 onClick={handleAddToCart}
               >
-                <ShoppingCart className="mr-2" size={18} />
-                Add to Cart
+                <ShoppingCart className="ml-2" size={18} />
+                إضافة إلى السلة
               </Button>
             </Card>
           </div>
@@ -155,7 +155,7 @@ const ProductDetail = () => {
       
       <footer className="border-t py-6 bg-gray-50">
         <div className="container text-center text-sm text-gray-500">
-          <p>&copy; 2025 ShopVista. All rights reserved.</p>
+          <p>جميع الحقوق محفوظة © 2025 ياقوت للإكسسوارات</p>
         </div>
       </footer>
     </div>

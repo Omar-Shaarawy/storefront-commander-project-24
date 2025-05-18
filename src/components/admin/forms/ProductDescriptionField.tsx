@@ -14,15 +14,16 @@ const ProductDescriptionField: React.FC<ProductDescriptionFieldProps> = ({
 }) => {
   return (
     <div className="space-y-2 md:col-span-2">
-      <Label htmlFor="description">Description</Label>
+      <Label htmlFor="description">الوصف</Label>
       <Textarea
         id="description"
         name="description"
         value={description}
         onChange={(e) => onDescriptionChange(e.target.value)}
-        placeholder="Product description"
+        placeholder="وصف المنتج"
         rows={3}
         required
+        className="text-right"
       />
     </div>
   );

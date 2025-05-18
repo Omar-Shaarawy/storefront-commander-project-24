@@ -69,8 +69,8 @@ const Index = () => {
       <Header />
       <main className="flex-1 container py-8">
         <section className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Welcome to ShopVista</h1>
-          <p className="text-gray-600">Discover our latest products with the best quality and prices</p>
+          <h1 className="text-3xl font-bold mb-2">مرحبًا بك في ياقوت للإكسسوارات</h1>
+          <p className="text-gray-600">اكتشفي أحدث تشكيلاتنا من الإكسسوارات بأفضل جودة وأسعار مميزة</p>
         </section>
         
         <SearchFilters
@@ -84,7 +84,7 @@ const Index = () => {
       
       <footer className="border-t py-6 bg-gray-50">
         <div className="container text-center text-sm text-gray-500">
-          <p>&copy; 2025 ShopVista. All rights reserved.</p>
+          <p>جميع الحقوق محفوظة © 2025 ياقوت للإكسسوارات</p>
         </div>
       </footer>
     </div>
