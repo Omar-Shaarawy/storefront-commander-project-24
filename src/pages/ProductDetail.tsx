@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useProducts } from "@/contexts/ProductContext";
 import { useCart } from "@/contexts/CartContext";
-import { Star, ShoppingCart, Minus, Plus } from "lucide-react";
+import { Star, ShoppingCart, Minus, Plus, ShoppingBag } from "lucide-react";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card";
 const ProductDetail = () => {
   const { productId } = useParams();
   const { products } = useProducts();
-  const { addItem } = useCart();
+  const { addItem, checkoutViaWhatsApp } = useCart();
   const navigate = useNavigate();
   
   const [quantity, setQuantity] = useState(1);
@@ -63,6 +63,11 @@ const ProductDetail = () => {
 
   const handleAddToCart = () => {
     addItem(product, quantity);
+  };
+  
+  const handleBuyNow = () => {
+    addItem(product, quantity);
+    checkoutViaWhatsApp();
   };
 
   const incrementQuantity = () => setQuantity(prev => prev + 1);
@@ -140,14 +145,25 @@ const ProductDetail = () => {
                 </div>
               </div>
               
-              <Button 
-                className="w-full bg-brand hover:bg-brand-dark"
-                size="lg"
-                onClick={handleAddToCart}
-              >
-                <ShoppingCart className="ml-2" size={18} />
-                إضافة إلى السلة
-              </Button>
+              <div className="flex flex-col space-y-2">
+                <Button 
+                  className="w-full bg-brand hover:bg-brand-dark"
+                  size="lg"
+                  onClick={handleAddToCart}
+                >
+                  <ShoppingCart className="ml-2" size={18} />
+                  إضافة إلى السلة
+                </Button>
+                
+                <Button 
+                  className="w-full bg-green-600 hover:bg-green-700"
+                  size="lg"
+                  onClick={handleBuyNow}
+                >
+                  <ShoppingBag className="ml-2" size={18} />
+                  شراء الآن عبر واتساب
+                </Button>
+              </div>
             </Card>
           </div>
         </div>

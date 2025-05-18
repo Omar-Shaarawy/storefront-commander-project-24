@@ -16,19 +16,36 @@ interface CartContextType {
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
+  checkoutViaWhatsApp: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+// Get a unique user identifier or create one if it doesn't exist
+const getUserId = () => {
+  let userId = localStorage.getItem('shopvista-user-id');
+  if (!userId) {
+    userId = 'user_' + Date.now().toString(36) + Math.random().toString(36).substring(2);
+    localStorage.setItem('shopvista-user-id', userId);
+  }
+  return userId;
+};
+
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const userId = getUserId();
+  const storageKey = `shopvista-cart-${userId}`;
+
   const [items, setItems] = useState<CartItem[]>(() => {
-    const storedCart = localStorage.getItem('shopvista-cart');
+    const storedCart = localStorage.getItem(storageKey);
     return storedCart ? JSON.parse(storedCart) : [];
   });
 
+  // Phone number for WhatsApp checkout - replace with your actual number
+  const whatsappNumber = '966500000000'; // Example: Saudi Arabia number
+
   useEffect(() => {
-    localStorage.setItem('shopvista-cart', JSON.stringify(items));
-  }, [items]);
+    localStorage.setItem(storageKey, JSON.stringify(items));
+  }, [items, storageKey]);
 
   const addItem = (product: Product, quantity: number) => {
     setItems(currentItems => {
@@ -38,14 +55,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const updatedItems = [...currentItems];
         updatedItems[existingItemIndex].quantity += quantity;
         toast({ 
-          title: "Cart updated", 
-          description: `${product.name} quantity updated in cart` 
+          title: "تم تحديث السلة", 
+          description: `تم تحديث كمية ${product.name} في السلة` 
         });
         return updatedItems;
       } else {
         toast({ 
-          title: "Added to cart", 
-          description: `${product.name} added to your cart` 
+          title: "تمت الإضافة إلى السلة", 
+          description: `تم إضافة ${product.name} إلى سلة التسوق` 
         });
         return [...currentItems, { product, quantity }];
       }
@@ -67,8 +84,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const itemToRemove = currentItems.find(item => item.product.id === productId);
       if (itemToRemove) {
         toast({ 
-          title: "Item removed", 
-          description: `${itemToRemove.product.name} removed from cart` 
+          title: "تمت إزالة المنتج", 
+          description: `تم إزالة ${itemToRemove.product.name} من السلة` 
         });
       }
       return currentItems.filter(item => item.product.id !== productId);
@@ -77,7 +94,46 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const clearCart = () => {
     setItems([]);
-    toast({ title: "Cart cleared", description: "All items have been removed" });
+    toast({ title: "تم تفريغ السلة", description: "تمت إزالة جميع المنتجات من السلة" });
+  };
+
+  const checkoutViaWhatsApp = () => {
+    if (items.length === 0) {
+      toast({ 
+        title: "السلة فارغة", 
+        description: "أضف بعض المنتجات إلى سلة التسوق أولاً", 
+        variant: "destructive" 
+      });
+      return;
+    }
+
+    // Create order message
+    let message = "*طلب جديد من متجر ياقوت*\n\n";
+    message += "*تفاصيل المنتجات:*\n";
+    
+    items.forEach((item, index) => {
+      message += `${index + 1}. ${item.product.name} - ${item.quantity} قطعة - ${(item.product.price * item.quantity).toFixed(2)} ريال\n`;
+    });
+    
+    message += `\n*المجموع:* ${totalPrice.toFixed(2)} ريال`;
+    message += "\n\n*معلومات التوصيل:*";
+    message += "\nالاسم: ";
+    message += "\nالعنوان: ";
+    message += "\nرقم الهاتف: ";
+
+    // Encode the message for URL
+    const encodedMessage = encodeURIComponent(message);
+    
+    // Create WhatsApp URL
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+    
+    // Open WhatsApp in a new window
+    window.open(whatsappUrl, '_blank');
+    
+    toast({ 
+      title: "جاري الانتقال إلى واتساب", 
+      description: "سيتم فتح واتساب لإكمال الطلب" 
+    });
   };
 
   const totalItems = items.reduce((total, item) => total + item.quantity, 0);
@@ -95,7 +151,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       removeItem,
       clearCart,
       totalItems,
-      totalPrice
+      totalPrice,
+      checkoutViaWhatsApp
     }}>
       {children}
     </CartContext.Provider>

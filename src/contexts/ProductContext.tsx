@@ -13,6 +13,7 @@ interface ProductContextType {
   categories: {id: string, name: string, imageUrl: string}[];
   setCategories: React.Dispatch<React.SetStateAction<{id: string, name: string, imageUrl: string}[]>>;
   addCategory: (name: string, imageFile: File) => void;
+  deleteCategory: (id: string) => void;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -35,12 +36,29 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Save products to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('shopvista-products', JSON.stringify(products));
-  }, [products]);
+    
+    // Update mock data file - for illustration purposes in a client-side only app
+    const mockData = {
+      products,
+      categories
+    };
+    
+    // In a real application with backend, you would save to a database
+    // Here we're just simulating persistence with localStorage
+    localStorage.setItem('shopvista-mockdata', JSON.stringify(mockData));
+  }, [products, categories]);
   
   // Save categories to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('shopvista-categories', JSON.stringify(categories));
-  }, [categories]);
+    
+    // Update mock data file again
+    const mockData = {
+      products,
+      categories
+    };
+    localStorage.setItem('shopvista-mockdata', JSON.stringify(mockData));
+  }, [categories, products]);
 
   const addProduct = (productData: Omit<Product, "id" | "createdAt">) => {
     const newProduct: Product = {
@@ -49,10 +67,18 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
       createdAt: new Date().toISOString(),
     };
     
+    // If using blob URLs, store in localStorage to make them persistent
+    if (newProduct.image.startsWith('blob:')) {
+      // Store mapping between blob URL and product ID
+      const imageMap = JSON.parse(localStorage.getItem('shopvista-image-map') || '{}');
+      imageMap[newProduct.id] = newProduct.image;
+      localStorage.setItem('shopvista-image-map', JSON.stringify(imageMap));
+    }
+    
     setProducts([newProduct, ...products]);
     toast({
-      title: "Product added",
-      description: `"${newProduct.name}" has been added successfully`,
+      title: "تمت إضافة المنتج",
+      description: `تم إضافة "${newProduct.name}" بنجاح`,
     });
   };
 
@@ -63,10 +89,17 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
         : product
     );
     
+    // Update image mapping if it's a blob URL
+    if (productData.image && productData.image.startsWith('blob:')) {
+      const imageMap = JSON.parse(localStorage.getItem('shopvista-image-map') || '{}');
+      imageMap[id] = productData.image;
+      localStorage.setItem('shopvista-image-map', JSON.stringify(imageMap));
+    }
+    
     setProducts(updatedProducts);
     toast({
-      title: "Product updated",
-      description: `"${productData.name}" has been updated successfully`,
+      title: "تم تحديث المنتج",
+      description: `تم تحديث "${productData.name}" بنجاح`,
     });
   };
 
@@ -77,18 +110,20 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
       return;
     }
     
-    const productName = productToDelete.name || "Product";
+    const productName = productToDelete.name || "المنتج";
     
-    // If the image is a blob URL, revoke it to free memory
+    // If the image is a blob URL, remove it from our mapping
     if (productToDelete.image.startsWith('blob:')) {
-      URL.revokeObjectURL(productToDelete.image);
+      const imageMap = JSON.parse(localStorage.getItem('shopvista-image-map') || '{}');
+      delete imageMap[id];
+      localStorage.setItem('shopvista-image-map', JSON.stringify(imageMap));
     }
     
     setProducts(products.filter((product) => product.id !== id));
     
     toast({
-      title: "Product deleted",
-      description: `"${productName}" has been removed successfully`,
+      title: "تم حذف المنتج",
+      description: `تم حذف "${productName}" بنجاح`,
     });
   };
   
@@ -102,11 +137,34 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
       imageUrl
     };
     
+    // Store the Blob URL for persistence
+    const categoryImageMap = JSON.parse(localStorage.getItem('shopvista-category-image-map') || '{}');
+    categoryImageMap[newCategory.id] = imageUrl;
+    localStorage.setItem('shopvista-category-image-map', JSON.stringify(categoryImageMap));
+    
     setCategories([...categories, newCategory]);
     
     toast({
-      title: "Category added",
-      description: `"${name}" has been added successfully`,
+      title: "تمت إضافة الفئة",
+      description: `تم إضافة "${name}" بنجاح`,
+    });
+  };
+  
+  const deleteCategory = (id: string) => {
+    const categoryToDelete = categories.find(cat => cat.id === id);
+    
+    if (!categoryToDelete) return;
+    
+    // Remove from our image mapping
+    const categoryImageMap = JSON.parse(localStorage.getItem('shopvista-category-image-map') || '{}');
+    delete categoryImageMap[id];
+    localStorage.setItem('shopvista-category-image-map', JSON.stringify(categoryImageMap));
+    
+    setCategories(categories.filter(cat => cat.id !== id));
+    
+    toast({
+      title: "تم حذف الفئة",
+      description: `تم حذف "${categoryToDelete.name}" بنجاح`,
     });
   };
 
@@ -124,7 +182,8 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setFilteredProducts,
     categories,
     setCategories,
-    addCategory
+    addCategory,
+    deleteCategory
   };
 
   return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;

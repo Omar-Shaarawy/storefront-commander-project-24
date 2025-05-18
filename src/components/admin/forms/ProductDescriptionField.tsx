@@ -23,7 +23,8 @@ const ProductDescriptionField: React.FC<ProductDescriptionFieldProps> = ({
         placeholder="وصف المنتج"
         rows={3}
         required
-        className="text-right"
+        className="text-right resize-y"
+        dir="rtl"
       />
     </div>
   );
