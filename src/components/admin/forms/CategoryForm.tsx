@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -53,8 +53,8 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ onSubmit, onCancel }) => {
     // Validation
     if (!name.trim()) {
       toast({
-        title: "Missing information",
-        description: "Please enter a category name",
+        title: "معلومات مفقودة",
+        description: "الرجاء إدخال اسم الفئة",
         variant: "destructive",
       });
       return;
@@ -62,8 +62,8 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ onSubmit, onCancel }) => {
 
     if (!imageFile) {
       toast({
-        title: "Missing information",
-        description: "Please upload a category image",
+        title: "معلومات مفقودة",
+        description: "الرجاء رفع صورة للفئة",
         variant: "destructive",
       });
       return;
@@ -74,21 +74,22 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ onSubmit, onCancel }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 p-4 bg-white rounded-lg shadow">
-      <h2 className="text-xl font-bold mb-4">Add New Category</h2>
+      <h2 className="text-xl font-bold mb-4">إضافة فئة جديدة</h2>
       
       <div className="space-y-2">
-        <Label htmlFor="name">Category Name</Label>
+        <Label htmlFor="name">اسم الفئة</Label>
         <Input
           id="name"
           value={name}
           onChange={handleNameChange}
-          placeholder="Enter category name"
+          placeholder="أدخل اسم الفئة"
           required
+          className="text-right"
         />
       </div>
       
       <div className="space-y-2">
-        <Label htmlFor="image">Category Image</Label>
+        <Label htmlFor="image">صورة الفئة</Label>
         
         {/* Hidden file input */}
         <input
@@ -105,13 +106,13 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ onSubmit, onCancel }) => {
           <div className="relative w-full h-48 border rounded-md overflow-hidden">
             <img 
               src={previewUrl} 
-              alt="Category preview" 
+              alt="معاينة الفئة" 
               className="w-full h-full object-contain"
             />
             <button
               type="button"
               onClick={removeImage}
-              className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-md"
+              className="absolute top-2 left-2 bg-white rounded-full p-1 shadow-md"
             >
               <X size={18} />
             </button>
@@ -123,9 +124,9 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ onSubmit, onCancel }) => {
           >
             <Upload size={32} className="mb-2 text-gray-400" />
             <p className="text-sm text-gray-500 text-center">
-              Click to upload an image or drag and drop
+              انقر لرفع صورة أو اسحب وأفلت
             </p>
-            <p className="text-xs text-gray-400 mt-1">PNG, JPG, GIF up to 5MB</p>
+            <p className="text-xs text-gray-400 mt-1">PNG، JPG، GIF حتى 5MB</p>
           </div>
         )}
       </div>
@@ -133,7 +134,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ onSubmit, onCancel }) => {
       {/* Live preview of the category */}
       {(name || previewUrl) && (
         <div className="mt-6 p-4 border rounded-md bg-gray-50">
-          <h3 className="font-medium text-sm text-gray-500 mb-2">Preview</h3>
+          <h3 className="font-medium text-sm text-gray-500 mb-2">معاينة</h3>
           <div className="border rounded-lg overflow-hidden flex flex-col">
             <div className="h-32 overflow-hidden bg-gray-100">
               {previewUrl ? (
@@ -150,26 +151,26 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ onSubmit, onCancel }) => {
             </div>
             <div className="p-3">
               <h3 className="font-medium">
-                {name || "Category Name"}
+                {name || "اسم الفئة"}
               </h3>
             </div>
           </div>
         </div>
       )}
       
-      <div className="flex justify-end gap-2 pt-2">
+      <div className="flex justify-start gap-2 pt-2">
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
         >
-          Cancel
+          إلغاء
         </Button>
         <Button
           type="submit"
           className="bg-brand hover:bg-brand-dark"
         >
-          Add Category
+          إضافة الفئة
         </Button>
       </div>
     </form>

@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 const CategoryManagement = () => {
   const { isAuthenticated, isAdmin } = useAuth();
   const navigate = useNavigate();
-  const { categories, addCategory } = useProducts();
+  const { categories, addCategory, setCategories } = useProducts();
   const [isAddingCategory, setIsAddingCategory] = useState(false);
 
   // Redirect if not authenticated or not admin
@@ -31,8 +31,8 @@ const CategoryManagement = () => {
     const categoryToDelete = categories.find(cat => cat.id === id);
     if (!categoryToDelete) return;
     
-    const { categories: currentCategories, setCategories } = useProducts();
-    const updatedCategories = currentCategories.filter(cat => cat.id !== id);
+    // Filter out the category from the list
+    const updatedCategories = categories.filter(cat => cat.id !== id);
     setCategories(updatedCategories);
     
     // Revoke the object URL to free memory
@@ -48,14 +48,14 @@ const CategoryManagement = () => {
   return (
     <AdminLayout>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Category Management</h1>
+        <h1 className="text-3xl font-bold">إدارة الفئات</h1>
         {!isAddingCategory && (
           <Button 
             onClick={() => setIsAddingCategory(true)}
             className="bg-brand hover:bg-brand-dark"
           >
-            <FolderPlus className="mr-2" size={18} />
-            Add New Category
+            <FolderPlus className="ml-2" size={18} />
+            إضافة فئة جديدة
           </Button>
         )}
       </div>
@@ -71,21 +71,21 @@ const CategoryManagement = () => {
       
       <Card>
         <CardHeader>
-          <CardTitle>Categories</CardTitle>
+          <CardTitle>الفئات</CardTitle>
         </CardHeader>
         <CardContent>
           {categories.length === 0 ? (
             <div className="text-center py-8">
               <FolderPlus className="mx-auto mb-4 text-gray-300" size={48} />
-              <p className="text-lg text-gray-500">No categories yet</p>
+              <p className="text-lg text-gray-500">لا توجد فئات حتى الآن</p>
               <p className="text-sm text-gray-400 mb-4">
-                Add categories to organize your products
+                أضف فئات لتنظيم منتجاتك
               </p>
               <Button 
                 onClick={() => setIsAddingCategory(true)}
                 className="bg-brand hover:bg-brand-dark"
               >
-                Add Your First Category
+                أضف أول فئة لك
               </Button>
             </div>
           ) : (

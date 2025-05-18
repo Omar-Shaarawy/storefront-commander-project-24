@@ -52,12 +52,17 @@
   }
 }
 
+/* Import Arabic font */
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap');
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground antialiased;
+    font-family: 'Tajawal', sans-serif;
+    direction: rtl;
   }
 }
 
@@ -89,4 +94,14 @@
   .animate-fade-in {
     @apply animate-in fade-in duration-300;
   }
+  
+  /* RTL specific classes */
+  .rtl-flip {
+    transform: scaleX(-1);
+  }
+  
+  .rtl-container {
+    @apply flex flex-row-reverse;
+  }
 }
+

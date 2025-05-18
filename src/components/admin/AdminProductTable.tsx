@@ -38,19 +38,19 @@ const AdminProductTable: React.FC<AdminProductTableProps> = ({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Image</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Rating</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>الصورة</TableHead>
+            <TableHead>الاسم</TableHead>
+            <TableHead>السعر</TableHead>
+            <TableHead>الفئة</TableHead>
+            <TableHead>التقييم</TableHead>
+            <TableHead className="text-left">الإجراءات</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {products.length === 0 ? (
             <TableRow>
               <TableCell colSpan={6} className="text-center py-4 text-muted-foreground">
-                No products found
+                لم يتم العثور على منتجات
               </TableCell>
             </TableRow>
           ) : (
@@ -64,16 +64,16 @@ const AdminProductTable: React.FC<AdminProductTableProps> = ({
                   />
                 </TableCell>
                 <TableCell className="font-medium">{product.name}</TableCell>
-                <TableCell>${product.price.toFixed(2)}</TableCell>
+                <TableCell>{product.price.toFixed(2)} ريال</TableCell>
                 <TableCell>{product.category}</TableCell>
                 <TableCell>{product.rating}</TableCell>
-                <TableCell className="text-right space-x-2">
+                <TableCell className="text-left space-x-2">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => onEdit(product)}
                   >
-                    Edit
+                    تعديل
                   </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
@@ -81,24 +81,24 @@ const AdminProductTable: React.FC<AdminProductTableProps> = ({
                         variant="destructive"
                         size="sm"
                       >
-                        Delete
+                        حذف
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogTitle>هل أنت متأكد؟</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This will permanently delete the product "{product.name}".
-                          This action cannot be undone.
+                          سيؤدي هذا إلى حذف المنتج "{product.name}" نهائيًا.
+                          لا يمكن التراجع عن هذا الإجراء.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogFooter className="flex-row-reverse">
+                        <AlertDialogCancel>إلغاء</AlertDialogCancel>
                         <AlertDialogAction
                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                           onClick={() => onDelete(product.id)}
                         >
-                          Delete
+                          حذف
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>

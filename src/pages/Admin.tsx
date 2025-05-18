@@ -65,22 +65,22 @@ const Admin = () => {
   return (
     <AdminLayout>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+        <h1 className="text-3xl font-bold">لوحة إدارة المتجر</h1>
         <div className="flex space-x-2">
           <Button 
             onClick={() => navigate("/admin/categories")}
             variant="outline"
-            className="flex items-center"
+            className="flex items-center mr-2"
           >
-            <FolderPlus className="mr-2" size={18} />
-            Manage Categories
+            <FolderPlus className="ml-2" size={18} />
+            إدارة الفئات
           </Button>
           {!isAddingProduct && !editingProduct && (
             <Button 
               onClick={() => setIsAddingProduct(true)}
               className="bg-brand hover:bg-brand-dark"
             >
-              Add New Product
+              إضافة منتج جديد
             </Button>
           )}
         </div>
@@ -101,7 +101,7 @@ const Admin = () => {
       
       <Card>
         <CardHeader>
-          <CardTitle>Products</CardTitle>
+          <CardTitle>المنتجات</CardTitle>
         </CardHeader>
         <CardContent>
           <AdminProductTable 

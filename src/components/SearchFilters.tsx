@@ -35,20 +35,20 @@ const SearchFilters = ({
       <form onSubmit={handleSearchSubmit} className="md:flex gap-4 space-y-3 md:space-y-0">
         <div className="flex-1">
           <Input
-            placeholder="Search products..."
+            placeholder="ابحث عن منتجات..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full"
+            className="w-full text-right"
           />
         </div>
         
         <div className="flex flex-col md:flex-row gap-3">
           <Select onValueChange={onCategoryChange} defaultValue="all">
             <SelectTrigger className="w-full md:w-[180px]">
-              <SelectValue placeholder="Category" />
+              <SelectValue placeholder="الفئة" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
+              <SelectItem value="all">جميع الفئات</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category.id} value={category.id}>
                   {category.name}
@@ -59,18 +59,18 @@ const SearchFilters = ({
 
           <Select onValueChange={onSortChange} defaultValue="newest">
             <SelectTrigger className="w-full md:w-[180px]">
-              <SelectValue placeholder="Sort by" />
+              <SelectValue placeholder="الترتيب حسب" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="newest">Newest First</SelectItem>
-              <SelectItem value="oldest">Oldest First</SelectItem>
-              <SelectItem value="priceAsc">Price: Low to High</SelectItem>
-              <SelectItem value="priceDesc">Price: High to Low</SelectItem>
+              <SelectItem value="newest">الأحدث أولاً</SelectItem>
+              <SelectItem value="oldest">الأقدم أولاً</SelectItem>
+              <SelectItem value="priceAsc">السعر: من الأقل إلى الأعلى</SelectItem>
+              <SelectItem value="priceDesc">السعر: من الأعلى إلى الأقل</SelectItem>
             </SelectContent>
           </Select>
 
           <Button type="submit" className="bg-brand hover:bg-brand-dark">
-            Search
+            بحث
           </Button>
         </div>
       </form>
