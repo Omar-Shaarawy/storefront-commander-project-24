@@ -2,9 +2,20 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+import { cn } from "@/lib/utils";
+import { User, ShoppingCart, LogOut } from "lucide-react";
 
 const Header = () => {
-  const { isAuthenticated, isAdmin, logout } = useAuth();
+  const { isAuthenticated, isAdmin, user, logout } = useAuth();
   
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
@@ -27,23 +38,89 @@ const Header = () => {
             </svg>
             <span className="ml-2 text-xl font-bold text-foreground">ShopVista</span>
           </Link>
+          
+          <NavigationMenu className="hidden md:flex ml-4">
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <Link to="/" className={navigationMenuTriggerStyle()}>
+                  Shop
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>Categories</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                    {["Electronics", "Clothing", "Home & Garden", "Books", "Toys", "Sports"].map((category) => (
+                      <li key={category}>
+                        <NavigationMenuLink asChild>
+                          <a
+                            href={`#${category.toLowerCase()}`}
+                            className={cn(
+                              "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                            )}
+                          >
+                            <div className="text-sm font-medium leading-none">{category}</div>
+                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                              Browse our {category.toLowerCase()} collection
+                            </p>
+                          </a>
+                        </NavigationMenuLink>
+                      </li>
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link to="/#deals" className={navigationMenuTriggerStyle()}>
+                  Deals
+                </Link>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
         </div>
         
         <div className="flex items-center gap-4">
-          {isAdmin && (
-            <Button variant="outline" asChild>
-              <Link to="/admin">Admin Dashboard</Link>
-            </Button>
-          )}
+          <Button variant="ghost" size="icon">
+            <ShoppingCart className="h-5 w-5" />
+          </Button>
           
           {isAuthenticated ? (
-            <Button variant="ghost" onClick={logout}>
-              Logout
-            </Button>
+            isAdmin ? (
+              <>
+                <Button variant="outline" asChild>
+                  <Link to="/admin">
+                    <User className="mr-2 h-4 w-4" />
+                    Admin Dashboard
+                  </Link>
+                </Button>
+                <Button variant="ghost" onClick={logout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="outline" asChild>
+                  <Link to="/dashboard">
+                    <User className="mr-2 h-4 w-4" />
+                    My Account
+                  </Link>
+                </Button>
+                <Button variant="ghost" onClick={logout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </Button>
+              </>
+            )
           ) : (
-            <Button variant="ghost" asChild>
-              <Link to="/login">Admin Login</Link>
-            </Button>
+            <>
+              <Button variant="outline" asChild>
+                <Link to="/login">Login</Link>
+              </Button>
+              <Button className="bg-brand hover:bg-brand-dark" asChild>
+                <Link to="/register">Register</Link>
+              </Button>
+            </>
           )}
         </div>
       </div>

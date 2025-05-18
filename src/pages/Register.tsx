@@ -8,23 +8,40 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-const Login = () => {
+const Register = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   
-  const { login, isAdmin } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
+  
+  const validateForm = () => {
+    setPasswordError("");
+    if (password !== confirmPassword) {
+      setPasswordError("Passwords do not match");
+      return false;
+    }
+    if (password.length < 6) {
+      setPasswordError("Password must be at least 6 characters");
+      return false;
+    }
+    return true;
+  };
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     
+    if (!validateForm()) return;
+    
+    setIsLoading(true);
     try {
-      const success = await login(email, password);
+      const success = await register(name, email, password);
       if (success) {
-        // Redirect based on role
-        navigate(isAdmin ? "/admin" : "/dashboard");
+        navigate('/');
       }
     } finally {
       setIsLoading(false);
@@ -38,24 +55,30 @@ const Login = () => {
       <main className="flex-1 container flex items-center justify-center py-12">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">Login to ShopVista</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">Create an Account</CardTitle>
             <CardDescription className="text-center">
-              Enter your credentials to access your account
+              Enter your details to register for ShopVista
             </CardDescription>
-            <div className="border-t pt-4 text-sm text-muted-foreground text-center">
-              <p>Demo credentials:</p>
-              <p>Admin Email: admin123@gmail.com</p>
-              <p>Admin Password: 123456789OO</p>
-            </div>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="John Doe"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin123@gmail.com"
+                  placeholder="john@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -71,17 +94,30 @@ const Login = () => {
                   required
                 />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+                {passwordError && (
+                  <p className="text-sm text-red-500">{passwordError}</p>
+                )}
+              </div>
               <Button 
                 type="submit" 
                 className="w-full bg-brand hover:bg-brand-dark" 
                 disabled={isLoading}
               >
-                {isLoading ? "Logging in..." : "Login"}
+                {isLoading ? "Creating account..." : "Register"}
               </Button>
               <div className="text-center text-sm mt-4">
-                Don't have an account?{" "}
-                <Link to="/register" className="text-brand hover:underline">
-                  Register
+                Already have an account?{" "}
+                <Link to="/login" className="text-brand hover:underline">
+                  Login
                 </Link>
               </div>
             </form>
@@ -98,4 +134,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
