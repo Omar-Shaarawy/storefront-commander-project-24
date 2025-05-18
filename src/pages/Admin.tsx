@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -9,6 +8,7 @@ import AdminProductForm from "@/components/admin/forms/AdminProductForm";
 import AdminProductTable from "@/components/admin/AdminProductTable";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FolderPlus } from "lucide-react";
 
 const Admin = () => {
   const { isAuthenticated, isAdmin } = useAuth();
@@ -48,14 +48,24 @@ const Admin = () => {
     <AdminLayout>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        {!isAddingProduct && !editingProduct && (
+        <div className="flex space-x-2">
           <Button 
-            onClick={() => setIsAddingProduct(true)}
-            className="bg-brand hover:bg-brand-dark"
+            onClick={() => navigate("/admin/categories")}
+            variant="outline"
+            className="flex items-center"
           >
-            Add New Product
+            <FolderPlus className="mr-2" size={18} />
+            Manage Categories
           </Button>
-        )}
+          {!isAddingProduct && !editingProduct && (
+            <Button 
+              onClick={() => setIsAddingProduct(true)}
+              className="bg-brand hover:bg-brand-dark"
+            >
+              Add New Product
+            </Button>
+          )}
+        </div>
       </div>
       
       {(isAddingProduct || editingProduct) && (

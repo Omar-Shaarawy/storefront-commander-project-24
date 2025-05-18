@@ -1,13 +1,14 @@
-
 import { Star } from "lucide-react";
 import { Product } from "@/lib/mockData";
+import { useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
-  const { name, price, description, rating, image } = product;
+  const { id, name, price, description, rating, image } = product;
+  const navigate = useNavigate();
   
   // Generate stars based on rating
   const renderStars = (rating: number) => {
@@ -37,8 +38,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
     return stars;
   };
   
+  const handleViewDetails = () => {
+    navigate(`/product/${id}`);
+  };
+  
   return (
-    <div className="product-card hover-scale">
+    <div className="product-card hover-scale cursor-pointer" onClick={handleViewDetails}>
       <img
         src={image}
         alt={name}
@@ -52,7 +57,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         <div className="star-rating mb-2">{renderStars(rating)}</div>
         <p className="text-sm text-gray-600 line-clamp-2 mb-3 flex-grow">{description}</p>
         <button className="w-full rounded-md bg-brand py-2 text-white hover:bg-brand-dark transition-colors">
-          Add to Cart
+          View Details
         </button>
       </div>
     </div>

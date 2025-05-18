@@ -6,12 +6,16 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { ProductProvider } from "@/contexts/ProductContext";
+import { CartProvider } from "@/contexts/CartContext";
 import Index from "./pages/Index";
 import Admin from "./pages/Admin";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import UserDashboard from "./pages/UserDashboard";
 import NotFound from "./pages/NotFound";
+import ProductDetail from "./pages/ProductDetail";
+import Cart from "./pages/Cart";
+import CategoryManagement from "./pages/CategoryManagement";
 
 const queryClient = new QueryClient();
 
@@ -47,11 +51,21 @@ const AppRoutes = () => {
       <Route path="/" element={<Index />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/product/:productId" element={<ProductDetail />} />
+      <Route path="/cart" element={<Cart />} />
       <Route 
         path="/admin" 
         element={
           <AdminRoute>
             <Admin />
+          </AdminRoute>
+        } 
+      />
+      <Route 
+        path="/admin/categories" 
+        element={
+          <AdminRoute>
+            <CategoryManagement />
           </AdminRoute>
         } 
       />
@@ -76,7 +90,9 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <ProductProvider>
-            <AppRoutes />
+            <CartProvider>
+              <AppRoutes />
+            </CartProvider>
           </ProductProvider>
         </AuthProvider>
       </BrowserRouter>
