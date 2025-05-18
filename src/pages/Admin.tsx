@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -24,19 +25,43 @@ const Admin = () => {
     }
   }, [isAuthenticated, isAdmin, navigate]);
 
-  const handleAddProduct = (productData: Omit<Product, "id" | "createdAt">) => {
+  const handleAddProduct = (productData: Omit<Product, "id" | "createdAt">, imageFile?: File | null) => {
+    // If we have an image file, create a blob URL for it
+    if (imageFile) {
+      const imageUrl = URL.createObjectURL(imageFile);
+      productData.image = imageUrl;
+    }
+    
     addProduct(productData);
     setIsAddingProduct(false);
   };
 
-  const handleUpdateProduct = (productData: Omit<Product, "id" | "createdAt">) => {
+  const handleUpdateProduct = (productData: Omit<Product, "id" | "createdAt">, imageFile?: File | null) => {
     if (!editingProduct) return;
+    
+    // If we have an image file, create a blob URL for it
+    if (imageFile) {
+      // Revoke old object URL if it was one
+      if (editingProduct.image.startsWith('blob:')) {
+        URL.revokeObjectURL(editingProduct.image);
+      }
+      
+      const imageUrl = URL.createObjectURL(imageFile);
+      productData.image = imageUrl;
+    }
     
     updateProduct(editingProduct.id, productData);
     setEditingProduct(null);
   };
 
   const handleDeleteProduct = (id: string) => {
+    // Get the product to check if we need to revoke any blob URLs
+    const productToDelete = products.find(p => p.id === id);
+    
+    if (productToDelete && productToDelete.image.startsWith('blob:')) {
+      URL.revokeObjectURL(productToDelete.image);
+    }
+    
     deleteProduct(id);
   };
 

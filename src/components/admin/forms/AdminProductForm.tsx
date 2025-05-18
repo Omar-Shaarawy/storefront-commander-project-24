@@ -9,7 +9,7 @@ import ProductFormActions from "./ProductFormActions";
 
 interface AdminProductFormProps {
   product?: Product;
-  onSubmit: (product: Omit<Product, "id" | "createdAt">) => void;
+  onSubmit: (product: Omit<Product, "id" | "createdAt">, imageFile?: File | null) => void;
   onCancel: () => void;
 }
 
@@ -29,6 +29,7 @@ const AdminProductForm = ({
   onCancel,
 }: AdminProductFormProps) => {
   const [formData, setFormData] = useState(product || defaultProduct);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const isEditing = !!product;
 
   useEffect(() => {
@@ -55,11 +56,15 @@ const AdminProductForm = ({
     setFormData({ ...formData, tags });
   };
 
+  const handleImageFileChange = (file: File | null) => {
+    setImageFile(file);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
-    if (!formData.name.trim() || !formData.description.trim() || !formData.image.trim() || !formData.category) {
+    if (!formData.name.trim() || !formData.description.trim()) {
       toast({
         title: "Validation Error",
         description: "Please fill out all required fields",
@@ -68,7 +73,26 @@ const AdminProductForm = ({
       return;
     }
     
-    onSubmit(formData);
+    // Check if we have either an image URL or an uploaded file
+    if (!formData.image && !imageFile) {
+      toast({
+        title: "Validation Error",
+        description: "Please provide a product image",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!formData.category) {
+      toast({
+        title: "Validation Error",
+        description: "Please select a product category",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    onSubmit(formData, imageFile);
   };
 
   return (
@@ -85,6 +109,8 @@ const AdminProductForm = ({
         image={formData.image}
         onFieldChange={handleFieldChange}
         onCategoryChange={handleCategoryChange}
+        onImageFileChange={handleImageFileChange}
+        imageFile={imageFile}
       />
       
       <ProductDescriptionField

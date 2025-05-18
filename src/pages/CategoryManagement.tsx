@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -25,11 +25,11 @@ const CategoryManagement = () => {
   });
 
   // Redirect if not authenticated or not admin
-  useState(() => {
+  useEffect(() => {
     if (!isAuthenticated || !isAdmin) {
       navigate("/login");
     }
-  });
+  }, [isAuthenticated, isAdmin, navigate]);
 
   const handleAddCategory = (name: string, imageFile: File) => {
     // Create object URL for storing the image

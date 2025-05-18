@@ -57,7 +57,19 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const deleteProduct = (id: string) => {
-    const productName = products.find(p => p.id === id)?.name || "Product";
+    const productToDelete = products.find(p => p.id === id);
+    
+    if (!productToDelete) {
+      return;
+    }
+    
+    const productName = productToDelete.name || "Product";
+    
+    // If the image is a blob URL, revoke it to free memory
+    if (productToDelete.image.startsWith('blob:')) {
+      URL.revokeObjectURL(productToDelete.image);
+    }
+    
     setProducts(products.filter((product) => product.id !== id));
     
     toast({
@@ -65,6 +77,11 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
       description: `"${productName}" has been removed successfully`,
     });
   };
+
+  // Effect to update filtered products when products change
+  useEffect(() => {
+    setFilteredProducts(products);
+  }, [products]);
 
   const value = {
     products,

@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -9,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Upload, X } from "lucide-react";
 import { categories } from "@/lib/mockData";
 
 interface ProductBasicFieldsProps {
@@ -19,6 +19,8 @@ interface ProductBasicFieldsProps {
   image: string;
   onFieldChange: (fieldName: string, value: string | number) => void;
   onCategoryChange: (category: string) => void;
+  onImageFileChange?: (file: File | null) => void;
+  imageFile?: File | null;
 }
 
 const ProductBasicFields: React.FC<ProductBasicFieldsProps> = ({
@@ -29,7 +31,14 @@ const ProductBasicFields: React.FC<ProductBasicFieldsProps> = ({
   image,
   onFieldChange,
   onCategoryChange,
+  onImageFileChange,
+  imageFile,
 }) => {
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    image && !imageFile ? image : null
+  );
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     let parsedValue: string | number = value;
@@ -40,6 +49,54 @@ const ProductBasicFields: React.FC<ProductBasicFieldsProps> = ({
     
     onFieldChange(name, parsedValue);
   };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      
+      // Create URL for preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImagePreview(reader.result as string);
+        // Update image URL field with placeholder to indicate file upload
+        onFieldChange("image", "file-upload");
+      };
+      reader.readAsDataURL(file);
+      
+      if (onImageFileChange) {
+        onImageFileChange(file);
+      }
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
+  const removeImage = () => {
+    setImagePreview(null);
+    onFieldChange("image", "");
+    if (onImageFileChange) {
+      onImageFileChange(null);
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  // For loading categories from localStorage if available
+  const [localCategories] = useState<{id: string, name: string}[]>(() => {
+    const storedCategories = localStorage.getItem('shopvista-categories');
+    return storedCategories ? JSON.parse(storedCategories) : [];
+  });
+
+  // Combine predefined categories with local ones, skipping "All Categories"
+  const allCategories = [
+    ...categories.slice(1),
+    ...localCategories.filter(localCat => 
+      !categories.some(cat => cat.id === localCat.id)
+    )
+  ];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -81,7 +138,7 @@ const ProductBasicFields: React.FC<ProductBasicFieldsProps> = ({
             <SelectValue placeholder="Select category" />
           </SelectTrigger>
           <SelectContent>
-            {categories.slice(1).map((category) => (
+            {allCategories.map((category) => (
               <SelectItem key={category.id} value={category.id}>
                 {category.name}
               </SelectItem>
@@ -106,14 +163,59 @@ const ProductBasicFields: React.FC<ProductBasicFieldsProps> = ({
       </div>
       
       <div className="space-y-2 md:col-span-2">
-        <Label htmlFor="image">Image URL</Label>
+        <Label htmlFor="productImage">Product Image</Label>
+        
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          id="productImage"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="hidden"
+        />
+        
+        {imagePreview ? (
+          <div className="relative w-full h-64 border rounded-md overflow-hidden">
+            <img 
+              src={imagePreview} 
+              alt="Product preview" 
+              className="w-full h-full object-contain"
+            />
+            <button
+              type="button"
+              onClick={removeImage}
+              className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-md"
+            >
+              <X size={18} />
+            </button>
+          </div>
+        ) : (
+          <div
+            onClick={triggerFileInput}
+            className="border-2 border-dashed rounded-md p-8 cursor-pointer hover:bg-gray-50 flex flex-col items-center justify-center"
+          >
+            <Upload size={32} className="mb-2 text-gray-400" />
+            <p className="text-sm text-gray-500 text-center">
+              Click to upload a product image
+            </p>
+            <p className="text-xs text-gray-400 mt-1">PNG, JPG, GIF up to 5MB</p>
+          </div>
+        )}
+        
+        <p className="text-xs text-gray-500 mt-1">
+          Upload an image from your device or provide a URL below.
+        </p>
+        
+        {/* Keep the URL input for backwards compatibility and external images */}
         <Input
           id="image"
           name="image"
-          value={image}
+          value={image && image !== "file-upload" ? image : ""}
           onChange={handleChange}
-          placeholder="https://example.com/image.jpg"
-          required
+          placeholder="Or provide an image URL (https://...)"
+          className="mt-2"
+          disabled={!!imagePreview && image === "file-upload"}
         />
       </div>
     </div>

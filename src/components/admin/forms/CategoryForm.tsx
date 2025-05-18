@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,16 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ onSubmit, onCancel }) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewedCategoryName, setPreviewedCategoryName] = useState("");
+
+  useEffect(() => {
+    // Update preview name with a slight delay to make it feel more natural
+    const timer = setTimeout(() => {
+      setPreviewedCategoryName(name);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, [name]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -129,6 +139,33 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ onSubmit, onCancel }) => {
           </div>
         )}
       </div>
+      
+      {/* Live preview of the category */}
+      {(name || previewUrl) && (
+        <div className="mt-6 p-4 border rounded-md bg-gray-50">
+          <h3 className="font-medium text-sm text-gray-500 mb-2">Preview</h3>
+          <div className="border rounded-lg overflow-hidden flex flex-col">
+            <div className="h-32 overflow-hidden bg-gray-100">
+              {previewUrl ? (
+                <img 
+                  src={previewUrl} 
+                  alt={name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-300">
+                  <Upload size={32} />
+                </div>
+              )}
+            </div>
+            <div className="p-3">
+              <h3 className="font-medium">
+                {previewedCategoryName || "Category Name"}
+              </h3>
+            </div>
+          </div>
+        </div>
+      )}
       
       <div className="flex justify-end gap-2 pt-2">
         <Button
