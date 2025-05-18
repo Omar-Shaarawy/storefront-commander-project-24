@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Product } from "@/lib/mockData";
 import { useProducts } from "@/contexts/ProductContext";
 import AdminLayout from "@/components/admin/AdminLayout";
-import AdminProductForm from "@/components/AdminProductForm";
+import AdminProductForm from "@/components/admin/forms/AdminProductForm";
 import AdminProductTable from "@/components/admin/AdminProductTable";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
