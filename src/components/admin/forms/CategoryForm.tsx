@@ -16,16 +16,6 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ onSubmit, onCancel }) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [previewedCategoryName, setPreviewedCategoryName] = useState("");
-
-  useEffect(() => {
-    // Update preview name with a slight delay to make it feel more natural
-    const timer = setTimeout(() => {
-      setPreviewedCategoryName(name);
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, [name]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -160,7 +150,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ onSubmit, onCancel }) => {
             </div>
             <div className="p-3">
               <h3 className="font-medium">
-                {previewedCategoryName || "Category Name"}
+                {name || "Category Name"}
               </h3>
             </div>
           </div>

@@ -1,4 +1,5 @@
-import React, { useRef, useState } from "react";
+
+import React, { useRef, useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -9,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Upload, X } from "lucide-react";
-import { categories } from "@/lib/mockData";
+import { useProducts } from "@/contexts/ProductContext";
 
 interface ProductBasicFieldsProps {
   name: string;
@@ -34,10 +35,24 @@ const ProductBasicFields: React.FC<ProductBasicFieldsProps> = ({
   onImageFileChange,
   imageFile,
 }) => {
+  const { categories } = useProducts();
   const [imagePreview, setImagePreview] = useState<string | null>(
     image && !imageFile ? image : null
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Update image preview whenever the image or imageFile props change
+  useEffect(() => {
+    if (imageFile) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(imageFile);
+    } else if (image && !imageFile) {
+      setImagePreview(image);
+    }
+  }, [image, imageFile]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -84,20 +99,6 @@ const ProductBasicFields: React.FC<ProductBasicFieldsProps> = ({
     }
   };
 
-  // For loading categories from localStorage if available
-  const [localCategories] = useState<{id: string, name: string}[]>(() => {
-    const storedCategories = localStorage.getItem('shopvista-categories');
-    return storedCategories ? JSON.parse(storedCategories) : [];
-  });
-
-  // Combine predefined categories with local ones, skipping "All Categories"
-  const allCategories = [
-    ...categories.slice(1),
-    ...localCategories.filter(localCat => 
-      !categories.some(cat => cat.id === localCat.id)
-    )
-  ];
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div className="space-y-2">
@@ -138,7 +139,7 @@ const ProductBasicFields: React.FC<ProductBasicFieldsProps> = ({
             <SelectValue placeholder="Select category" />
           </SelectTrigger>
           <SelectContent>
-            {allCategories.map((category) => (
+            {categories.map((category) => (
               <SelectItem key={category.id} value={category.id}>
                 {category.name}
               </SelectItem>

@@ -55,13 +55,6 @@ const Admin = () => {
   };
 
   const handleDeleteProduct = (id: string) => {
-    // Get the product to check if we need to revoke any blob URLs
-    const productToDelete = products.find(p => p.id === id);
-    
-    if (productToDelete && productToDelete.image.startsWith('blob:')) {
-      URL.revokeObjectURL(productToDelete.image);
-    }
-    
     deleteProduct(id);
   };
 

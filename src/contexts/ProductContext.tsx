@@ -10,6 +10,9 @@ interface ProductContextType {
   deleteProduct: (id: string) => void;
   filteredProducts: Product[];
   setFilteredProducts: React.Dispatch<React.SetStateAction<Product[]>>;
+  categories: {id: string, name: string, imageUrl: string}[];
+  setCategories: React.Dispatch<React.SetStateAction<{id: string, name: string, imageUrl: string}[]>>;
+  addCategory: (name: string, imageFile: File) => void;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -22,11 +25,22 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   });
   
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
+  
+  // Load categories from localStorage
+  const [categories, setCategories] = useState<{id: string, name: string, imageUrl: string}[]>(() => {
+    const storedCategories = localStorage.getItem('shopvista-categories');
+    return storedCategories ? JSON.parse(storedCategories) : [];
+  });
 
   // Save products to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('shopvista-products', JSON.stringify(products));
   }, [products]);
+  
+  // Save categories to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('shopvista-categories', JSON.stringify(categories));
+  }, [categories]);
 
   const addProduct = (productData: Omit<Product, "id" | "createdAt">) => {
     const newProduct: Product = {
@@ -77,6 +91,24 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
       description: `"${productName}" has been removed successfully`,
     });
   };
+  
+  const addCategory = (name: string, imageFile: File) => {
+    // Create object URL for storing the image
+    const imageUrl = URL.createObjectURL(imageFile);
+    
+    const newCategory = {
+      id: `cat_${Date.now()}`,
+      name,
+      imageUrl
+    };
+    
+    setCategories([...categories, newCategory]);
+    
+    toast({
+      title: "Category added",
+      description: `"${name}" has been added successfully`,
+    });
+  };
 
   // Effect to update filtered products when products change
   useEffect(() => {
@@ -90,6 +122,9 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     deleteProduct,
     filteredProducts,
     setFilteredProducts,
+    categories,
+    setCategories,
+    addCategory
   };
 
   return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;

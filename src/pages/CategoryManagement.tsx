@@ -1,28 +1,19 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "@/components/ui/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { Plus, FolderPlus, Trash2 } from "lucide-react";
+import { useProducts } from "@/contexts/ProductContext";
+import { FolderPlus, Trash2 } from "lucide-react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import CategoryForm from "@/components/admin/forms/CategoryForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface Category {
-  id: string;
-  name: string;
-  imageUrl: string;
-}
-
 const CategoryManagement = () => {
   const { isAuthenticated, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const { categories, addCategory } = useProducts();
   const [isAddingCategory, setIsAddingCategory] = useState(false);
-  const [categories, setCategories] = useState<Category[]>(() => {
-    const storedCategories = localStorage.getItem('shopvista-categories');
-    return storedCategories ? JSON.parse(storedCategories) : [];
-  });
 
   // Redirect if not authenticated or not admin
   useEffect(() => {
@@ -32,43 +23,22 @@ const CategoryManagement = () => {
   }, [isAuthenticated, isAdmin, navigate]);
 
   const handleAddCategory = (name: string, imageFile: File) => {
-    // Create object URL for storing the image
-    const imageUrl = URL.createObjectURL(imageFile);
-    
-    const newCategory: Category = {
-      id: `cat_${Date.now()}`,
-      name,
-      imageUrl
-    };
-    
-    const updatedCategories = [...categories, newCategory];
-    setCategories(updatedCategories);
-    localStorage.setItem('shopvista-categories', JSON.stringify(updatedCategories));
-    
+    addCategory(name, imageFile);
     setIsAddingCategory(false);
-    toast({
-      title: "Category added",
-      description: `"${name}" has been added successfully`,
-    });
   };
 
   const handleDeleteCategory = (id: string) => {
     const categoryToDelete = categories.find(cat => cat.id === id);
     if (!categoryToDelete) return;
     
-    const updatedCategories = categories.filter(cat => cat.id !== id);
+    const { categories: currentCategories, setCategories } = useProducts();
+    const updatedCategories = currentCategories.filter(cat => cat.id !== id);
     setCategories(updatedCategories);
-    localStorage.setItem('shopvista-categories', JSON.stringify(updatedCategories));
     
     // Revoke the object URL to free memory
     if (categoryToDelete.imageUrl.startsWith('blob:')) {
       URL.revokeObjectURL(categoryToDelete.imageUrl);
     }
-    
-    toast({
-      title: "Category deleted",
-      description: `"${categoryToDelete.name}" has been removed`,
-    });
   };
 
   if (!isAuthenticated || !isAdmin) {
@@ -84,7 +54,7 @@ const CategoryManagement = () => {
             onClick={() => setIsAddingCategory(true)}
             className="bg-brand hover:bg-brand-dark"
           >
-            <Plus className="mr-2" size={18} />
+            <FolderPlus className="mr-2" size={18} />
             Add New Category
           </Button>
         )}

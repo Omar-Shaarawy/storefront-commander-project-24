@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { categories } from "@/lib/mockData";
+import { useProducts } from "@/contexts/ProductContext";
 
 interface SearchFiltersProps {
   onSearch: (query: string) => void;
@@ -23,6 +23,7 @@ const SearchFilters = ({
   onSortChange,
 }: SearchFiltersProps) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const { categories } = useProducts();
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,6 +48,7 @@ const SearchFilters = ({
               <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category.id} value={category.id}>
                   {category.name}
